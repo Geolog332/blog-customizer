@@ -7,9 +7,7 @@ import clsx from 'clsx';
 export type OnClick = () => void;
 
 export type ArrowButtonProps = {
-	// Флаг состояния формы
 	form?: boolean;
-	// Функция, вызываемая при открытии/закрытии формы
 	onClick?: OnClick;
 };
 

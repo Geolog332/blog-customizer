@@ -30,31 +30,29 @@ export const ArticleParamsForm = ({
 	setDefaultArticle,
 }: ArticleParamsFormProps) => {
 	// Локальное состояние формы и параметров статьи
-	const [form, setForm] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [state, setState] = useState(defaultArticle);
 
 	// Обработчик открытия и закрытия формы
 	function toggleForm() {
-		setForm((prevForm) => !prevForm);
+		setIsMenuOpen((prevForm) => !prevForm);
 	}
 
 	// Ссылка на элемент формы для отслеживания кликов вне формы
 	const ref = useRef<HTMLFormElement | null>(null);
 
-	// Обработчик закрытия формы, если кликаем вне формы
-	function closeClickForm(event: MouseEvent) {
-		if (ref.current && !ref.current.contains(event.target as Node)) {
-			setForm(false);
-		}
-	}
-
-	// Обработчик закрытия формы, если нажимаем Escape
+	// Обработчик закрытия формы, если нажимаем Escape, если кликаем вне формы
 	useEffect(() => {
-		if (!form) return;
+		if (!isMenuOpen) return;
 
 		function closeForm(event: KeyboardEvent) {
 			if (event.key === 'Escape') {
-				setForm(false);
+				setIsMenuOpen(false);
+			}
+		}
+		function closeClickForm(event: MouseEvent) {
+			if (ref.current && !ref.current.contains(event.target as Node)) {
+				setIsMenuOpen(false);
 			}
 		}
 
@@ -67,7 +65,7 @@ export const ArticleParamsForm = ({
 			document.removeEventListener('keydown', closeForm);
 			document.removeEventListener('mousedown', closeClickForm);
 		};
-	}, [form]);
+	}, [isMenuOpen]);
 
 	// Обработчик отправки формы
 	function addSettings(event: FormEvent) {
@@ -84,11 +82,13 @@ export const ArticleParamsForm = ({
 	return (
 		<>
 			{/* Кнопка для открытия/закрытия формы */}
-			<ArrowButton form={form} onClick={toggleForm} />
+			<ArrowButton form={isMenuOpen} onClick={toggleForm} />
 
 			{/* Сайдбар с формой параметров статьи */}
 			<aside
-				className={clsx(styles.container, { [styles.container_open]: form })}>
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={addSettings}
